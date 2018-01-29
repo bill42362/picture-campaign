@@ -5,15 +5,29 @@ import ReduxThunk from 'redux-thunk';
 import { connect, Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PbplueMemberCenter from 'pbplus-member-sdk';
+import Debug from 'debug';
+import PbplusMemberCenter from 'pbplus-member-sdk';
+import AuthState from './AuthState.js';
+import HeaderAnnounces from './HeaderAnnounces.js';
 import App from './App.react.js';
 import 'normalize.css';
 import '../css/index.less';
 
+Debug.disable();
+if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
+
 const reducer = combineReducers({
-    pbplusMemberCenter: PbplueMemberCenter.Reducer,
+    pbplusMemberCenter: PbplusMemberCenter.Reducer,
+    authState: AuthState.Reducer,
+    headerAnnounces: HeaderAnnounces.Reducer,
 });
 const store = createStore(reducer, applyMiddleware(ReduxThunk));
+
+store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: '8486C5FA991611E790810ACA2C7BEF8A'}))
+.then(({ isUserLoggedIn, endpoint }) => {
+    store.dispatch(AuthState.Actions.updateAuthState({authState: { isUserLoggedIn, endpoint }}));
+})
+.catch(error => { Debug('picture-campaign:index')('checkAuthState()', JSON.stringify(error)); });
 
 const ConnectedApp = connect(
     (state, ownProps) => {

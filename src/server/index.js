@@ -18,7 +18,7 @@ const renderApp = `
             <title>pb+ lottery</title>
             ${isProd ? '<link rel="stylesheet" href="/css/index.css"/>' : ''}
         </head>
-        <body>
+        <body style="background-color: black;">
             <div id="app-root"></div>
             <script type='text/javascript' src="${isProd ? `/js/bundle.js` : `http://localhost:7000/js/bundle.js`}" ></script>
         </body>
