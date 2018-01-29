@@ -1,9 +1,15 @@
 // webpack.config.babel.js
 'use strict';
+import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import EnvConfig from './config.json';
 
 const isProd = process.env.NODE_ENV === 'production';
 const WDS_PORT = 7000;
+const nodeEnv = process.env.NODE_ENV || EnvConfig.NODE_ENV || 'develop';
+const plugins = [
+    new webpack.EnvironmentPlugin(Object.assign({}, EnvConfig, {NODE_ENV: nodeEnv})),
+];
 
 export default {
     entry: [
@@ -79,11 +85,11 @@ export default {
         ]
     },
     plugins: isProd
-        ? [ new ExtractTextPlugin({
-            filename: 'css/[name].css',
-            allChunks: true
-        }) ]
-        : [],
+        ? [
+            ...plugins,
+            new ExtractTextPlugin({filename: 'css/[name].css', allChunks: true}),
+        ]
+        : plugins,
     devtool: isProd ? false : 'source-map',
     resolve: {
         extensions: ['.js', '.jsx'],

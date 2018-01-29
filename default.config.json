@@ -1,0 +1,9 @@
+{
+    "NODE_ENV": "develop",
+    "AUTH_CLIENT_ID": "",
+    "AUTH_BASE_URL": "http://localhost:3000",
+    "MEMBER_CENTER_BASE_URL": "http://localhost:3000",
+    "MEMBER_BASE_URL": "http://localhost:3000",
+    "COMMON_BASE_URL": "http://localhost:3000",
+    "API_BASE_URL": "http://localhost:3000"
+}
