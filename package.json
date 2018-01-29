@@ -4,6 +4,12 @@
   "description": "Add functional buttons on picture.",
   "main": "dist/server/index.js",
   "scripts": {
+    "build": "rimraf dist && babel src -d dist --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
+    "start": "npm run build && cross-env NODE_ENV=production node dist/server",
+    "deploy": "npm run build && babel-node src/deploy",
+    "devserver": "babel-node src/server",
+    "devserver:auto": "nodemon --ignore dist --exec babel-node src/server",
+    "wds": "webpack-dev-server --progress",
     "test": "jest"
   },
   "repository": {
@@ -42,12 +48,21 @@
     "less-loader": "^4.0.5",
     "nodemon": "^1.14.11",
     "normalize.css": "^7.0.0",
+    "pbplus-member-sdk": "^2.14.2",
+    "pbplus-member-ui": "^2.17.6",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "react-telephone-input": "^4.3.4",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
     "rimraf": "^2.6.2",
     "style-loader": "^0.20.1",
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
+  },
+  "dependencies": {
+    "express": "^4.16.2"
   }
 }
