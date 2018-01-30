@@ -8,6 +8,9 @@ import AuthState from './AuthState.js';
 import Header from './Header.react.js';
 import '../css/app.less';
 
+import BasePicture from '../img/lottery-0201.png';
+import BasePictureMobile from '../img/lottery-mobile-0201.png';
+
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
 
@@ -28,12 +31,20 @@ const ConnectedHeader = connect(
 )(Header);
 
 class App extends React.Component {
-    constructor(props) { super(props); }
+    constructor(props) {
+        super(props);
+    }
     render() {
-        const { } = this.props;
         return <div className='app'>
             <ConnectedHeader />
-            pb+ lottery
+            <div className='content'>
+                <div className='base-picture-wrapper'>
+                    <img className='base-picture' src={BasePicture} />
+                </div>
+                <div className='base-picture-mobile-wrapper'>
+                    <img className='base-picture-mobile' src={BasePictureMobile} />
+                </div>
+            </div>
             <div className='pbplus-member-center-wrapper'>
                 <PbplusMemberCenter.Container />
             </div>

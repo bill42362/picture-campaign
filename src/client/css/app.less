@@ -2,10 +2,27 @@
 @import './base.less';
 
 div.app {
+    div.content {
+        div.base-picture-wrapper {
+            text-align: center;
+            img.base-picture {
+                display: inline-block;
+                max-width: 100%;
+            }
+        }
+        div.base-picture-mobile-wrapper { display: none; }
+    }
 }
 
 @media (max-width: 767px) {
     div.app {
+        div.content {
+            div.base-picture-wrapper { display: none; }
+            div.base-picture-mobile-wrapper {
+                display: block;
+                img.base-picture-mobile { max-width: 100%; }
+            }
+        }
     }
 }
 
