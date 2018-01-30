@@ -13,6 +13,7 @@ if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
 
 const ConnectedHeader = connect(
     state => { return {
+        headerNavs: state.headerNavs,
         headerAnnounces: state.headerAnnounces,
         loginEndpoint: `${state.authState.endpoint}&token_id=${state.pbplusMemberCenter.userUuid}`,
         isUserLoggedIn: state.authState.isUserLoggedIn,

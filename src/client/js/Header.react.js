@@ -26,7 +26,7 @@ class Header extends React.Component {
     }
     render() {
         const {
-            headerAnnounces,
+            headerNavs, headerAnnounces,
             isUserLoggedIn, loginEndpoint, displayPbplusMemberCenter
         } = this.props;
         let authButton = <div data-button={true}>
@@ -43,6 +43,11 @@ class Header extends React.Component {
                 menuCloser={{src: XIcon, title: 'Close menu'}}
             >
                 <a href='//tw.pbplus.me' target='_self' data-logo={true}><img src={Logo} title='Home'/></a>
+                {headerNavs.main.map((nav, index) => {
+                    return <a key={index} href={nav.url} data-nav={true} data-color={nav.color} data-match={nav.url} >
+                        {nav.display}
+                    </a>;
+                })}
                 <a
                     href='//www.facebook.com/pbplus.me/' target='_blank'
                     data-subnav={true} data-color='rgb(62, 86, 155)'
