@@ -25,7 +25,10 @@ class Header extends React.Component {
         return false;
     }
     render() {
-        const { isUserLoggedIn, loginEndpoint, displayPbplusMemberCenter } = this.props;
+        const {
+            headerAnnounces,
+            isUserLoggedIn, loginEndpoint, displayPbplusMemberCenter
+        } = this.props;
         let authButton = <div data-button={true}>
             <a href={loginEndpoint} title='login' role='button'>登入</a>
         </div>;
@@ -55,9 +58,17 @@ class Header extends React.Component {
                 <div data-submenu_button={true} data-submenu_key='announce' data-submenu_type='list'>
                     <img src={EarthIcon} style={{height: '1.4em', borderRadius: '0.7em'}}/>
                 </div>
-                <div data-submenu_item={true}  data-submenu_key='announce' data-submenu_position='header'>
+                <div data-submenu_item={true} data-submenu_key='announce' data-submenu_position='header'>
                     <div>公告</div>
                 </div>
+                {headerAnnounces.map((announce, index) => {
+                    return <div data-submenu_item={true} data-submenu_key='announce' key={index}>
+                        <div className='announce'>
+                            <div className='announce-title'>{announce.title}</div>
+                            <div className='announce-content'>{announce.content}</div>
+                        </div>
+                    </div>;
+                })}
                 {isUserLoggedIn ? <a data-subnav={true} data-color='dimgray' style={{cursor: 'pointer'}}>
                     <img title='使用者中心' src={PeopleIcon} role='button' onClick={displayPbplusMemberCenter} />
                 </a> : <span />}

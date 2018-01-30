@@ -23,7 +23,10 @@ const reducer = combineReducers({
 });
 const store = createStore(reducer, applyMiddleware(ReduxThunk));
 
-store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: '8486C5FA991611E790810ACA2C7BEF8A'}))
+store.dispatch(HeaderAnnounces.Actions.fetchAnnounces())
+.catch(error => { Debug('picture-campaign:index')('fetchAnnounces()', JSON.stringify(error)); });
+
+store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: process.env.AUTH_CLIENT_ID}))
 .then(({ isUserLoggedIn, endpoint }) => {
     store.dispatch(AuthState.Actions.updateAuthState({authState: { isUserLoggedIn, endpoint }}));
 })
