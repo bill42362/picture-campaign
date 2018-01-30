@@ -74,7 +74,7 @@ class Header extends React.Component {
                         </div>
                     </div>;
                 })}
-                {isUserLoggedIn ? <a data-subnav={true} data-color='dimgray' style={{cursor: 'pointer'}}>
+                {isUserLoggedIn ? <a data-button={true} data-color='dimgray'>
                     <img title='使用者中心' src={PeopleIcon} role='button' onClick={displayPbplusMemberCenter} />
                 </a> : <span />}
                 {authButton}

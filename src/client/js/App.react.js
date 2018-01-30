@@ -34,6 +34,9 @@ class App extends React.Component {
         return <div className='app'>
             <ConnectedHeader />
             pb+ lottery
+            <div className='pbplus-member-center-wrapper'>
+                <PbplusMemberCenter.Container />
+            </div>
         </div>;
     }
 }
