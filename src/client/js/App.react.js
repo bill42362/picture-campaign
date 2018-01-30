@@ -14,6 +14,11 @@ import BasePictureMobile from '../img/lottery-mobile-0201.png';
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
 
+const basePicture = new Image();
+basePicture.src = BasePicture;
+const basePictureMobile = new Image();
+basePictureMobile.src = BasePictureMobile;
+
 const ConnectedHeader = connect(
     state => { return {
         headerNavs: state.headerNavs,
@@ -35,6 +40,7 @@ class App extends React.Component {
         super(props);
     }
     render() {
+        const { campaignButtons } = this.props;
         return <div className='app'>
             <ConnectedHeader />
             <div className='content'>
@@ -43,6 +49,32 @@ class App extends React.Component {
                 </div>
                 <div className='base-picture-mobile-wrapper'>
                     <img className='base-picture-mobile' src={BasePictureMobile} />
+                </div>
+                <div className='campaign-buttons-wrapper'>
+                    <div
+                        className='campaign-buttons'
+                        style={{width: basePicture.width}}
+                    >
+                        {campaignButtons.desktop.map((button, index) => {
+                            return <div
+                                className='campaign-button' key={index} role='button'
+                                {...button.props}
+                            >{button.content}</div>;
+                        })}
+                    </div>
+                </div>
+                <div className='campaign-buttons-mobile-wrapper'>
+                    <div
+                        className='campaign-buttons-mobile'
+                        style={{width: basePictureMobile.width}}
+                    >
+                        {campaignButtons.mobile.map((button, index) => {
+                            return <div
+                                className='campaign-button-mobile' key={index} role='button'
+                                {...button.props}
+                            >{button.content}</div>;
+                        })}
+                    </div>
                 </div>
             </div>
             <div className='pbplus-member-center-wrapper'>

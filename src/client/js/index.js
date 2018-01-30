@@ -37,9 +37,32 @@ store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: process.env.
 })
 .catch(error => { Debug('picture-campaign:index')('checkAuthState()', JSON.stringify(error)); });
 
+const campaignButtonActions = {
+    login: () => { console.log('login()'); },
+};
+const getCampaignButtons = state => {
+    const loginButton = {
+        desktop: {
+            props: {
+                style: {
+                    backgroundColor: 'gray',
+                    left: '50%', top: '50%', width: '10%', height: '5%'
+                },
+                onClick: campaignButtonActions.login,
+            },
+            content: <div>立即註冊/登入</div>,
+        },
+    };
+    return {
+        desktop: [loginButton.desktop],
+        mobile: [],
+    };
+};
+
 const ConnectedApp = connect(
     (state, ownProps) => {
         return {
+            campaignButtons: getCampaignButtons(state),
         };
     },
     (dispatch, ownProps) => { return {
