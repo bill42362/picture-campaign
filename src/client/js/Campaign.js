@@ -14,8 +14,11 @@ const getActions = (dispatch, state) => {
     return {
         login: () => { location = loginEndpoint; },
         openMemberCenter: () => dispatch(PbplusMemberCenter.Actions.display()),
-        fetchPoints: () => dispatch(fetchPoints()),
-        draw: () => { console.log('draw()'); },
+        fetchPoints: () => {
+            return dispatch(fetchPoints())
+            .then(() => dispatch(updateCampaignState({campaignState: {isPointsFetched: true}})));
+        },
+        draw: () => { return dispatch(draw()); },
     };
 };
 
@@ -110,7 +113,7 @@ export const getButtons = (dispatch, state) => {
     };
 };
 
-const defaultState = {isPointsFetched: false, points: 0};
+const defaultState = {isPointsFetched: false, points: 0, drawResult: undefined, awardName: ''};
 
 const Reducer = (state = defaultState, action) => {
     switch(action.type) {
@@ -128,7 +131,7 @@ const updateCampaignState = ({ campaignState }) => {
 
 const fetchPoints = () => { return (dispatch, getState) => {
     const { userUuid: uuid } = getState().pbplusMemberCenter;
-    fetch(`${process.env.MEMBER_CENTER_BASE_URL}/points`, {
+    return fetch(`${process.env.MEMBER_CENTER_BASE_URL}/points`, {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ uuid })
@@ -140,16 +143,55 @@ const fetchPoints = () => { return (dispatch, getState) => {
     .then(response => {
         if(200 === response.status) {
             const { points } = response.message;
-            dispatch(updateCampaignState({campaignState: {isPointsFetched: true, points }}));
+            dispatch(updateCampaignState({campaignState: { points }}));
+            return { points };
         }
         else { throw new Error('Bad response from server'); }
     })
     .catch(error => { Debug('picture-campaign:Campaign')('fetchPoints()', JSON.stringify(error)); });
 }; };
 
+const draw = () => { return (dispatch, getState) => {
+    const { userUuid: uuid } = getState().pbplusMemberCenter;
+    return fetch(`${process.env.API_BASE_URL}/campaign/draw_201802`, {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ uuid })
+    })
+    .then(response => {
+        if(response.status >= 400) { throw new Error('Bad response from server'); }
+        return response.json();
+    })
+    .then(response => {
+        if(200 === response.status) {
+            // 中獎
+            return dispatch(updateCampaignState({campaignState: {
+                drawResult: 'jackpot',
+                awardName: response.message,
+            }}));
+        }
+        else if(601 === response.status) {
+            // 非活動時間
+            return dispatch(updateCampaignState({campaignState: {drawResult: 'not_campaign_time'}}));
+        }
+        else if(602 === response.status) {
+            // 點數不足
+            return dispatch(updateCampaignState({campaignState: {drawResult: 'insufficient_points'}}));
+        }
+        else if(603 === response.status) {
+            // 沒中
+            return dispatch(updateCampaignState({campaignState: {drawResult: 'not_winning'}}));
+        }
+        else {
+            return dispatch(updateCampaignState({campaignState: {drawResult: 'something_go_wrong'}}));
+        }
+    })
+    .catch(error => { Debug('picture-campaign:Campaign')('onLoadAction()', JSON.stringify(error)); });
+}; };
+
 const onLoadAction = () => { return (dispatch, getState) => {
     const { userUuid: uuid } = getState().pbplusMemberCenter;
-    fetch(`${process.env.API_BASE_URL}/campaign/new_member_add_points_201802`, {
+    return fetch(`${process.env.API_BASE_URL}/campaign/new_member_add_points_201802`, {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ uuid })
