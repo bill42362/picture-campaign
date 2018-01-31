@@ -33,9 +33,8 @@ export const getButtons = (dispatch, state) => {
             rwd: 'desktop',
             props: {
                 style: {left: '74.6%', top: '30.8%', width: '11%', height: '1.2%'},
-                onClick: isUserLoggedIn ? openMemberCenter : login,
             },
-            content: isUserLoggedIn ? undefined : <a className='login' href={loginEndpoint} title='登入' />,
+            content: <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />,
         },
         {
             rwd: 'desktop',
@@ -72,9 +71,8 @@ export const getButtons = (dispatch, state) => {
             rwd: 'mobile',
             props: {
                 style: {left: '71.4%', top: '29.9%', width: '19.4%', height: '1.3%'},
-                onClick: isUserLoggedIn ? openMemberCenter : login,
             },
-            content: isUserLoggedIn ? undefined : <a className='login' href={loginEndpoint} title='登入' />,
+            content: <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />,
         },
         {
             rwd: 'mobile',
