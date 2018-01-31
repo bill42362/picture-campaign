@@ -36,7 +36,16 @@ const ConnectedHeader = connect(
 )(Header);
 
 class App extends React.Component {
-    constructor(props) { super(props); }
+    constructor(props) {
+        super(props);
+        this.closeCampaignResult = this.closeCampaignResult.bind(this);
+    }
+    closeCampaignResult(e) {
+        const { closeCampaignResult } = this.props;
+        if('campaign-result-wrapper' === e.target.className && closeCampaignResult) {
+            closeCampaignResult();
+        }
+    }
     componentDidMount() {
         const { onLoadAction } = this.props;
         onLoadAction();
@@ -75,7 +84,7 @@ class App extends React.Component {
                         })}
                     </div>
                 </div>
-                {drawResult && <div className='campaign-result-wrapper'>
+                {drawResult && <div className='campaign-result-wrapper' onClick={this.closeCampaignResult}>
                     <div className='campaign-result'>
                         <img className='campaign-result-image' src={drawResultImage} />
                         <div className='campaign-result-closer' role='button' onClick={closeCampaignResult}></div>

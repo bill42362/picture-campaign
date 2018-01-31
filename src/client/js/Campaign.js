@@ -116,7 +116,7 @@ export const getButtons = (dispatch, state) => {
 
 const defaultState = {
     isPointsFetched: false, points: 0,
-    drawResult: 'not_winning', drawResultImage: DrawResult, drawResultContents: []
+    drawResult: undefined, drawResultImage: undefined, drawResultContents: []
 };
 
 const Reducer = (state = defaultState, action) => {
@@ -171,23 +171,30 @@ const draw = () => { return (dispatch, getState) => {
             // 中獎
             return dispatch(updateCampaignState({campaignState: {
                 drawResult: 'jackpot',
+                drawResultImage: DrawResult,
                 drawResultContents: [
                     {
                         props: {
-                            style: {left: '31%', top: '84.6%', width: '34%', height: '2.5%'},
-                            onClick: isUserLoggedIn ? draw : login,
+                            style: {
+                                left: '20%', top: '37%', width: '80%', height: '8%', fontSize: '34px', textAlign: 'left'
+                            },
                         },
                         content: <div className='draw-result-award'>
-                            『
-                            <span className='campaign-result-award-name'>{awardName}</span>
-                            』乙份
+                            「
+                            <span className='draw-result-award-name'>{response.message}</span>
+                            」乙份
                         </div>,
                     },
                     {
                         props: {
-                            style: {left: '31%', top: '84.6%', width: '34%', height: '2.5%'},
+                            style: {
+                                left: '69.5%', top: '81.5%', width: '17.5%', height: '7%', fontSize: '32px', cursor: 'pointer'
+                            },
+                            onClick: () => {
+                                dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
+                                return dispatch(PbplusMemberCenter.Actions.display());
+                            },
                         },
-                        content: <div className='draw-result-fill'>前往填寫</div>,
                     },
                 ],
             }}));
