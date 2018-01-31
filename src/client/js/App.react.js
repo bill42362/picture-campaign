@@ -36,8 +36,10 @@ const ConnectedHeader = connect(
 )(Header);
 
 class App extends React.Component {
-    constructor(props) {
-        super(props);
+    constructor(props) { super(props); }
+    componentDidMount() {
+        const { onLoadAction } = this.props;
+        onLoadAction();
     }
     render() {
         const { campaignButtons } = this.props;
@@ -70,7 +72,7 @@ class App extends React.Component {
                     >
                         {campaignButtons.mobile.map((button, index) => {
                             return <div
-                                className='campaign-button-mobile' key={index} role='button'
+                                className='campaign-button' key={index} role='button'
                                 {...button.props}
                             >{button.content}</div>;
                         })}

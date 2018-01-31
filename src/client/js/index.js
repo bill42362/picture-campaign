@@ -10,7 +10,7 @@ import PbplusMemberCenter from 'pbplus-member-sdk';
 import AuthState from './AuthState.js';
 import HeaderNavs from './HeaderNavs.js';
 import HeaderAnnounces from './HeaderAnnounces.js';
-import { getButtons } from './Campaign.js';
+import Campaign from './Campaign.js';
 import App from './App.react.js';
 import 'normalize.css';
 import '../css/index.less';
@@ -23,6 +23,7 @@ const reducer = combineReducers({
     authState: AuthState.Reducer,
     headerNavs: HeaderNavs.Reducer,
     headerAnnounces: HeaderAnnounces.Reducer,
+    campaign: Campaign.Reducer,
 });
 const store = createStore(reducer, applyMiddleware(ReduxThunk));
 
@@ -41,10 +42,15 @@ store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: process.env.
 const ConnectedApp = connect(
     (state, ownProps) => {
         return {
-            campaignButtons: getButtons(store.dispatch, state),
+            campaignButtons: Campaign.getButtons(store.dispatch, state),
         };
     },
     (dispatch, ownProps) => { return {
+        onLoadAction: () => {
+            if(Campaign.Actions.onLoadAction) {
+                return dispatch(Campaign.Actions.onLoadAction());
+            }
+        },
     }; }
 )(App);
 

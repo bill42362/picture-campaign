@@ -1,0 +1,46 @@
+// campaign.less
+@import './base.less';
+
+div.campaign-button {
+    a.login {
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */
+        width: 100%; height: 100%;
+        color: rgb(150, 16, 44);
+        letter-spacing: 2px;
+        font-size: 20px;
+    }
+    div.fetch-points, div.draw {
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */
+        width: 100%; height: 100%;
+        color: rgb(150, 16, 44);
+        letter-spacing: 2px;
+        font-size: 20px;
+    }
+    div.points {
+        display: flex;
+        align-items: flex-end; /* align vertical */
+        position: relative;
+        width: 100%; height: 100%;
+        color: rgb(150, 16, 44);
+        letter-spacing: 2px;
+        span.points-title {
+            flex: 1;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        span.points-number {
+            flex: auto;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    div.campaign-button {
+    }
+}
