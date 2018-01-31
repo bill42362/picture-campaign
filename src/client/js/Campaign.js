@@ -5,7 +5,8 @@ import PbplusMemberCenter from 'pbplus-member-sdk';
 import Debug from 'debug';
 
 import '../css/campaign.less';
-import DrawResult from '../img/draw-result.png';
+import DrawResultJackpot from '../img/draw_result_jackpot.png';
+import DrawResultNotWinning from '../img/draw_result_not_winning.png';
 
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
@@ -169,7 +170,7 @@ const draw = () => { return (dispatch, getState) => {
             // 中獎
             return dispatch(updateCampaignState({campaignState: {
                 drawResult: 'jackpot',
-                drawResultImage: DrawResult,
+                drawResultImage: DrawResultJackpot,
                 drawResultContents: [
                     {
                         props: {
@@ -209,12 +210,17 @@ const draw = () => { return (dispatch, getState) => {
         }
         else if(603 === response.status) {
             // 沒中
-            return dispatch(updateCampaignState({campaignState: {drawResult: 'not_winning'}}));
+            return dispatch(updateCampaignState({campaignState: {
+                drawResult: 'not_winning',
+                drawResultImage: DrawResultNotWinning,
+                drawResultContents: [],
+            }}));
         }
         else {
             return dispatch(updateCampaignState({campaignState: {drawResult: 'something_go_wrong'}}));
         }
     })
+    .then(() => dispatch(fetchPoints()))
     .catch(error => { Debug('picture-campaign:Campaign')('onLoadAction()', JSON.stringify(error)); });
 }; };
 
