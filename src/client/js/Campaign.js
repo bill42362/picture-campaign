@@ -5,6 +5,7 @@ import PbplusMemberCenter from 'pbplus-member-sdk';
 import Debug from 'debug';
 
 import '../css/campaign.less';
+import DrawResult from '../img/draw-result.png';
 
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
@@ -113,7 +114,10 @@ export const getButtons = (dispatch, state) => {
     };
 };
 
-const defaultState = {isPointsFetched: false, points: 0, drawResult: undefined, awardName: ''};
+const defaultState = {
+    isPointsFetched: false, points: 0,
+    drawResult: 'not_winning', drawResultImage: DrawResult, drawResultContents: []
+};
 
 const Reducer = (state = defaultState, action) => {
     switch(action.type) {
@@ -167,12 +171,32 @@ const draw = () => { return (dispatch, getState) => {
             // 中獎
             return dispatch(updateCampaignState({campaignState: {
                 drawResult: 'jackpot',
-                awardName: response.message,
+                drawResultContents: [
+                    {
+                        props: {
+                            style: {left: '31%', top: '84.6%', width: '34%', height: '2.5%'},
+                            onClick: isUserLoggedIn ? draw : login,
+                        },
+                        content: <div className='draw-result-award'>
+                            『
+                            <span className='campaign-result-award-name'>{awardName}</span>
+                            』乙份
+                        </div>,
+                    },
+                    {
+                        props: {
+                            style: {left: '31%', top: '84.6%', width: '34%', height: '2.5%'},
+                        },
+                        content: <div className='draw-result-fill'>前往填寫</div>,
+                    },
+                ],
             }}));
         }
         else if(601 === response.status) {
             // 非活動時間
-            return dispatch(updateCampaignState({campaignState: {drawResult: 'not_campaign_time'}}));
+            return dispatch(updateCampaignState({campaignState: {
+                drawResult: 'not_campaign_time',
+            }}));
         }
         else if(602 === response.status) {
             // 點數不足

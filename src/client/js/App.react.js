@@ -42,21 +42,18 @@ class App extends React.Component {
         onLoadAction();
     }
     render() {
-        const { campaignButtons } = this.props;
+        const {
+            campaignButtons,
+            drawResult, drawResultImage, drawResultContents, closeCampaignResult
+        } = this.props;
         return <div className='app'>
             <ConnectedHeader />
             <div className='content'>
                 <div className='base-picture-wrapper'>
                     <img className='base-picture' src={BasePicture} />
                 </div>
-                <div className='base-picture-mobile-wrapper'>
-                    <img className='base-picture-mobile' src={BasePictureMobile} />
-                </div>
                 <div className='campaign-buttons-wrapper'>
-                    <div
-                        className='campaign-buttons'
-                        style={{width: basePicture.width}}
-                    >
+                    <div className='campaign-buttons' style={{width: basePicture.width}} >
                         {campaignButtons.desktop.map((button, index) => {
                             return <div
                                 className='campaign-button' key={index} role='button'
@@ -65,11 +62,11 @@ class App extends React.Component {
                         })}
                     </div>
                 </div>
+                <div className='base-picture-mobile-wrapper'>
+                    <img className='base-picture-mobile' src={BasePictureMobile} />
+                </div>
                 <div className='campaign-buttons-mobile-wrapper'>
-                    <div
-                        className='campaign-buttons-mobile'
-                        style={{width: basePictureMobile.width}}
-                    >
+                    <div className='campaign-buttons-mobile' style={{width: basePictureMobile.width}} >
                         {campaignButtons.mobile.map((button, index) => {
                             return <div
                                 className='campaign-button' key={index} role='button'
@@ -78,6 +75,19 @@ class App extends React.Component {
                         })}
                     </div>
                 </div>
+                {drawResult && <div className='campaign-result-wrapper'>
+                    <div className='campaign-result'>
+                        <img className='campaign-result-image' src={drawResultImage} />
+                        <div className='campaign-result-closer' role='button' onClick={closeCampaignResult}></div>
+                        <div className='campaign-result-contents'>
+                            {drawResultContents.map((content, index) => {
+                                return <div className='campaign-result-content' key={index} {...content.props}>
+                                    {content.content}
+                                </div>;
+                            })}
+                        </div>
+                    </div>
+                </div>}
             </div>
             <div className='pbplus-member-center-wrapper'>
                 <PbplusMemberCenter.Container />

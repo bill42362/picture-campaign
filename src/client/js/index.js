@@ -43,6 +43,9 @@ const ConnectedApp = connect(
     (state, ownProps) => {
         return {
             campaignButtons: Campaign.getButtons(store.dispatch, state),
+            drawResult: state.campaign.drawResult,
+            drawResultImage: state.campaign.drawResultImage,
+            drawResultContents: state.campaign.drawResultContents,
         };
     },
     (dispatch, ownProps) => { return {
@@ -50,6 +53,12 @@ const ConnectedApp = connect(
             if(Campaign.Actions.onLoadAction) {
                 return dispatch(Campaign.Actions.onLoadAction());
             }
+        },
+        closeCampaignResult: () => {
+            return dispatch(Campaign.Actions.updateCampaignState({campaignState: {
+                drawResult: undefined,
+                drawResultContents: [],
+            }}));
         },
     }; }
 )(App);

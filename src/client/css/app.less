@@ -29,6 +29,33 @@ div.app {
             }
         }
         div.campaign-buttons-mobile-wrapper { display: none; }
+        div.campaign-result-wrapper {
+            display: flex;
+            justify-content: center; /* align horizontal */
+            align-items: center; /* align vertical */
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.5);
+            top: 0px;
+            width: 100%; height: 100%;
+            text-align: center;
+            div.campaign-result {
+                position: relative;
+                max-width: 80%;
+                img.campaign-result-image { width: 100%; height: auto; }
+                div.campaign-result-closer {
+                    position: absolute;
+                    width: 10%; height: 15%;
+                    top: 0px; right: 0px;
+                    cursor: pointer;
+                    z-index: 1;
+                }
+                div.campaign-result-contents {
+                    position: absolute;
+                    width: 100%; height: 100%;
+                    top: 0px;
+                }
+            }
+        }
     }
     div.pbplus-member-center-wrapper {
         position: relative;
