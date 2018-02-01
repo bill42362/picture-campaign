@@ -164,13 +164,23 @@ export const getButtons = (dispatch, state) => {
     const { isPointsFetched, points } = state.campaign;
     const { login, openMemberCenter, fetchPoints, draw } = getButtonActions(dispatch, state);
     const loginEndpoint = `${state.authState.endpoint}&token_id=${state.pbplusMemberCenter.userUuid}`;
+    const joinButton = <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />;
+    const chanceButton = <div className='draw' title='機會'>機會</div>;
+    const destinyButton = <div className='draw' title='命運'>命運</div>;
+    const pointButton = isUserLoggedIn
+        ? isPointsFetched
+            ? <div className='points'>
+                <span className='points-title'>目前</span>
+                <span className='points-number'>{points}</span>
+                <span className='points-title'>點</span>
+            </div>
+            : <div className='fetch-points'>查看點數</div>
+        : <a className='login' href={loginEndpoint} title='查看點數'>查看點數</a>;
     const buttons = [
         {
             rwd: 'desktop',
-            props: {
-                style: {left: '68.1%', top: '36.2%', width: '13%', height: '1.5%'},
-            },
-            content: <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />,
+            props: {style: {left: '68.1%', top: '36.2%', width: '13%', height: '1.5%'}},
+            content: joinButton,
         },
         {
             rwd: 'desktop',
@@ -178,15 +188,7 @@ export const getButtons = (dispatch, state) => {
                 style: {left: '20.4%', top: '69.8%', width: '18.5%', height: '2.3%'},
                 onClick: isUserLoggedIn ? fetchPoints : login,
             },
-            content: isUserLoggedIn
-                ? isPointsFetched
-                    ? <div className='points'>
-                        <span className='points-title'>目前</span>
-                        <span className='points-number'>{points}</span>
-                        <span className='points-title'>點</span>
-                    </div>
-                    : <div className='fetch-points'>查看點數</div>
-                : <a className='login' href={loginEndpoint} title='查看點數'>查看點數</a>,
+            content: pointButton,
         },
         {
             rwd: 'desktop',
@@ -201,7 +203,7 @@ export const getButtons = (dispatch, state) => {
                 style: {left: '54.5%', top: '69.8%', width: '13.2%', height: '2.3%'},
                 onClick: isUserLoggedIn ? draw : login,
             },
-            content: <div className='draw' title='機會'>機會</div>,
+            content: chanceButton,
         },
         {
             rwd: 'desktop',
@@ -209,21 +211,12 @@ export const getButtons = (dispatch, state) => {
                 style: {left: '70.8%', top: '69.8%', width: '13.2%', height: '2.3%'},
                 onClick: isUserLoggedIn ? draw : login,
             },
-            content: <div className='draw' title='命運'>命運</div>,
+            content: destinyButton,
         },
         {
             rwd: 'mobile',
-            props: {
-                style: {left: '71.4%', top: '29.9%', width: '19.4%', height: '1.3%'},
-            },
-            content: <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />,
-        },
-        {
-            rwd: 'mobile',
-            props: {
-                style: {left: '20%', top: '75%', width: '58%', height: '8%'},
-                onClick: isUserLoggedIn ? draw : login,
-            },
+            props: {style: {left: '68.7%', top: '29.37%', width: '19.5%', height: '1.31%'}},
+            content: joinButton,
         },
         {
             rwd: 'mobile',
@@ -231,23 +224,30 @@ export const getButtons = (dispatch, state) => {
                 style: {left: '31%', top: '59.3%', width: '34%', height: '2.5%'},
                 onClick: isUserLoggedIn ? fetchPoints : login,
             },
-            content: isUserLoggedIn
-                ? isPointsFetched
-                    ? <div className='points'>
-                        <span className='points-title'>目前</span>
-                        <span className='points-number'>{points}</span>
-                        <span className='points-title'>點</span>
-                    </div>
-                    : <div className='fetch-points'>查看點數</div>
-                : <a className='login' href={loginEndpoint} title='查看點數'>查看點數</a>,
+            content: pointButton,
         },
         {
             rwd: 'mobile',
             props: {
-                style: {left: '31%', top: '84.6%', width: '34%', height: '2.5%'},
+                style: {left: '20%', top: '74%', width: '57%', height: '10%'},
                 onClick: isUserLoggedIn ? draw : login,
             },
-            content: <div className='draw' title='點擊抽獎'>點擊抽獎</div>,
+        },
+        {
+            rwd: 'mobile',
+            props: {
+                style: {left: '22%', top: '84.6%', width: '23%', height: '2.5%'},
+                onClick: isUserLoggedIn ? draw : login,
+            },
+            content: chanceButton,
+        },
+        {
+            rwd: 'mobile',
+            props: {
+                style: {left: '50.8%', top: '84.6%', width: '23%', height: '2.5%'},
+                onClick: isUserLoggedIn ? draw : login,
+            },
+            content: destinyButton,
         },
     ];
     return {
