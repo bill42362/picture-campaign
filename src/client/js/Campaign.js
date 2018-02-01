@@ -1,17 +1,149 @@
 // Campaign.js
 'use strict';
 import React from 'react';
-import PbplusMemberCenter from 'pbplus-member-sdk';
 import Debug from 'debug';
+import PbplusMemberCenter from 'pbplus-member-sdk';
 
 import '../css/campaign.less';
 import DrawResultJackpot from '../img/draw_result_jackpot.png';
 import DrawResultNotWinning from '../img/draw_result_not_winning.png';
+import DrawResultInsufficientPoints from '../img/draw_result_not_winning.png';
+import DrawResultNotCampaignTime from '../img/draw_result_not_winning.png';
+import DrawResultSomethingGoWrong from '../img/draw_result_not_winning.png';
 
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
 
-const getActions = (dispatch, state) => {
+const defaultDrawStates = {
+    drawResult: undefined,
+    drawResultImage: undefined,
+    drawResultContents: [],
+};
+const defaultState = Object.assign({}, defaultDrawStates, {
+    isPointsFetched: false, points: 0,
+});
+
+const Reducer = (state = defaultState, action) => {
+    switch(action.type) {
+        case 'UPDATE_CAMPAIGN_STATE':
+            return Object.assign({}, state, action.payload.campaignState);
+            break;
+        default:
+            return state;
+    }
+}
+
+const updateCampaignState = ({ campaignState }) => {
+    return {type: 'UPDATE_CAMPAIGN_STATE', payload: { campaignState }};
+};
+
+const fetchPoints = () => { return (dispatch, getState) => {
+    const { userUuid: uuid } = getState().pbplusMemberCenter;
+    return fetch(`${process.env.MEMBER_CENTER_BASE_URL}/points`, {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ uuid })
+    })
+    .then(response => {
+        if(response.status >= 400) { throw new Error('Bad response from server'); }
+        return response.json();
+    })
+    .then(response => {
+        if(200 === response.status) {
+            const { points } = response.message;
+            dispatch(updateCampaignState({campaignState: { points }}));
+            return { points };
+        }
+        else { throw new Error('Bad response from server'); }
+    })
+    .catch(error => { Debug('picture-campaign:Campaign')('fetchPoints()', JSON.stringify(error)); });
+}; };
+
+const draw = () => { return (dispatch, getState) => {
+    const { userUuid: uuid } = getState().pbplusMemberCenter;
+    return fetch(`${process.env.API_BASE_URL}/campaign/draw_201802`, {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ uuid })
+    })
+    .then(response => {
+        if(response.status >= 400) { throw new Error('Bad response from server'); }
+        return response.json();
+    })
+    .then(response => {
+        return dispatch(updateCampaignState({campaignState: getDrawStates({ response, dispatch })}));
+    })
+    .then(() => dispatch(fetchPoints()))
+    .catch(error => { Debug('picture-campaign:Campaign')('onLoadAction()', JSON.stringify(error)); });
+}; };
+
+const onLoadAction = () => { return (dispatch, getState) => {
+    const { userUuid: uuid } = getState().pbplusMemberCenter;
+}; };
+
+const Actions = { updateCampaignState, onLoadAction };
+
+const getDrawStates = ({ dispatch, response }) => {
+    switch(response.status) {
+        case 601:
+            return Object.assign({}, defaultDrawStates, {
+                drawResult: 'not_campaign_time',
+                drawResultImage: DrawResultNotCampaignTime,
+            });
+            break;
+        case 602:
+            return Object.assign({}, defaultDrawStates, {
+                drawResult: 'insufficient_points',
+                drawResultImage: DrawResultInsufficientPoints,
+            });
+            break;
+        case 603:
+            return Object.assign({}, defaultDrawStates, {
+                drawResult: 'not_winning',
+                drawResultImage: DrawResultNotWinning,
+            });
+            break;
+        case 200:
+            return Object.assign({}, defaultDrawStates, {
+                drawResult: 'jackpot',
+                drawResultImage: DrawResultJackpot,
+                drawResultContents: [
+                    {
+                        props: {
+                            style: {
+                                left: '20%', top: '37%', width: '80%', height: '8%', fontSize: '34px', textAlign: 'left'
+                            },
+                        },
+                        content: <div className='draw-result-award'>
+                            「
+                            <span className='draw-result-award-name'>{response.message}</span>
+                            」乙份
+                        </div>,
+                    },
+                    {
+                        props: {
+                            style: {
+                                left: '69.5%', top: '81.5%', width: '17.5%', height: '7%', fontSize: '32px', cursor: 'pointer'
+                            },
+                            onClick: () => {
+                                dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
+                                return dispatch(PbplusMemberCenter.Actions.display());
+                            },
+                        },
+                    },
+                ],
+            });
+            break;
+        default:
+            return Object.assign({}, defaultDrawStates, {
+                drawResult: 'something_go_wrong',
+                drawResultImage: DrawResultSomethingGoWrong,
+            });
+            break;
+    }
+};
+
+const getButtonActions = (dispatch, state) => {
     const loginEndpoint = `${state.authState.endpoint}&token_id=${state.pbplusMemberCenter.userUuid}`;
     return {
         login: () => { location = loginEndpoint; },
@@ -27,7 +159,7 @@ const getActions = (dispatch, state) => {
 export const getButtons = (dispatch, state) => {
     const { isUserLoggedIn } = state.authState;
     const { isPointsFetched, points } = state.campaign;
-    const { login, openMemberCenter, fetchPoints, draw } = getActions(dispatch, state);
+    const { login, openMemberCenter, fetchPoints, draw } = getButtonActions(dispatch, state);
     const loginEndpoint = `${state.authState.endpoint}&token_id=${state.pbplusMemberCenter.userUuid}`;
     const buttons = [
         {
@@ -112,122 +244,5 @@ export const getButtons = (dispatch, state) => {
         mobile: buttons.filter(button => 'mobile' === button.rwd),
     };
 };
-
-const defaultState = {
-    isPointsFetched: false, points: 0,
-    drawResult: undefined, drawResultImage: undefined, drawResultContents: []
-};
-
-const Reducer = (state = defaultState, action) => {
-    switch(action.type) {
-        case 'UPDATE_CAMPAIGN_STATE':
-            return Object.assign({}, state, action.payload.campaignState);
-            break;
-        default:
-            return state;
-    }
-}
-
-const updateCampaignState = ({ campaignState }) => {
-    return {type: 'UPDATE_CAMPAIGN_STATE', payload: { campaignState }};
-};
-
-const fetchPoints = () => { return (dispatch, getState) => {
-    const { userUuid: uuid } = getState().pbplusMemberCenter;
-    return fetch(`${process.env.MEMBER_CENTER_BASE_URL}/points`, {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ uuid })
-    })
-    .then(response => {
-        if(response.status >= 400) { throw new Error('Bad response from server'); }
-        return response.json();
-    })
-    .then(response => {
-        if(200 === response.status) {
-            const { points } = response.message;
-            dispatch(updateCampaignState({campaignState: { points }}));
-            return { points };
-        }
-        else { throw new Error('Bad response from server'); }
-    })
-    .catch(error => { Debug('picture-campaign:Campaign')('fetchPoints()', JSON.stringify(error)); });
-}; };
-
-const draw = () => { return (dispatch, getState) => {
-    const { userUuid: uuid } = getState().pbplusMemberCenter;
-    return fetch(`${process.env.API_BASE_URL}/campaign/draw_201802`, {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ uuid })
-    })
-    .then(response => {
-        if(response.status >= 400) { throw new Error('Bad response from server'); }
-        return response.json();
-    })
-    .then(response => {
-        if(200 === response.status) {
-            // 中獎
-            return dispatch(updateCampaignState({campaignState: {
-                drawResult: 'jackpot',
-                drawResultImage: DrawResultJackpot,
-                drawResultContents: [
-                    {
-                        props: {
-                            style: {
-                                left: '20%', top: '37%', width: '80%', height: '8%', fontSize: '34px', textAlign: 'left'
-                            },
-                        },
-                        content: <div className='draw-result-award'>
-                            「
-                            <span className='draw-result-award-name'>{response.message}</span>
-                            」乙份
-                        </div>,
-                    },
-                    {
-                        props: {
-                            style: {
-                                left: '69.5%', top: '81.5%', width: '17.5%', height: '7%', fontSize: '32px', cursor: 'pointer'
-                            },
-                            onClick: () => {
-                                dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
-                                return dispatch(PbplusMemberCenter.Actions.display());
-                            },
-                        },
-                    },
-                ],
-            }}));
-        }
-        else if(601 === response.status) {
-            // 非活動時間
-            return dispatch(updateCampaignState({campaignState: {
-                drawResult: 'not_campaign_time',
-            }}));
-        }
-        else if(602 === response.status) {
-            // 點數不足
-            return dispatch(updateCampaignState({campaignState: {drawResult: 'insufficient_points'}}));
-        }
-        else if(603 === response.status) {
-            // 沒中
-            return dispatch(updateCampaignState({campaignState: {
-                drawResult: 'not_winning',
-                drawResultImage: DrawResultNotWinning,
-                drawResultContents: [],
-            }}));
-        }
-        else {
-            return dispatch(updateCampaignState({campaignState: {drawResult: 'something_go_wrong'}}));
-        }
-    })
-    .then(() => dispatch(fetchPoints()))
-    .catch(error => { Debug('picture-campaign:Campaign')('onLoadAction()', JSON.stringify(error)); });
-}; };
-
-const onLoadAction = () => { return (dispatch, getState) => {
-    const { userUuid: uuid } = getState().pbplusMemberCenter;
-}; };
-
-const Actions = { updateCampaignState, onLoadAction };
 
 export default { getButtons, Reducer, Actions };
