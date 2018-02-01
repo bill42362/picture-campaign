@@ -226,20 +226,6 @@ const draw = () => { return (dispatch, getState) => {
 
 const onLoadAction = () => { return (dispatch, getState) => {
     const { userUuid: uuid } = getState().pbplusMemberCenter;
-    return fetch(`${process.env.API_BASE_URL}/campaign/new_member_add_points_201802`, {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ uuid })
-    })
-    .then(response => {
-        if(response.status >= 400) { throw new Error('Bad response from server'); }
-        return response.json();
-    })
-    .then(response => {
-        if(200 === response.status) { return response; }
-        else { throw new Error('Bad response from server'); }
-    })
-    .catch(error => { Debug('picture-campaign:Campaign')('onLoadAction()', JSON.stringify(error)); });
 }; };
 
 const Actions = { updateCampaignState, onLoadAction };
