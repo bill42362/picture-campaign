@@ -16,7 +16,7 @@ const renderApp = `
             <meta name="viewport" content="width=device-width">
             <meta name="viewport" content="initial-scale=1.0">
             <title>pb+ lottery</title>
-            ${isProd ? '<link rel="stylesheet" href="/css/index.css"/>' : ''}
+            ${isProd ? '<link rel="stylesheet" href="/css/main.css"/>' : ''}
         </head>
         <body style="background-color: black;">
             <div id="app-root"></div>
