@@ -5,6 +5,7 @@ import Debug from 'debug';
 import PbplusMemberCenter from 'pbplus-member-sdk';
 
 import '../css/campaign.less';
+import { BasePicture, BasePictureMobile } from './BasePicture.js';
 import DrawResultJackpot from '../img/draw_result_jackpot.png';
 import DrawResultNotWinning from '../img/draw_result_not_winning.png';
 import DrawResultInsufficientPoints from '../img/draw_result_not_winning.png';
@@ -20,6 +21,7 @@ const defaultDrawStates = {
     drawResultContents: [],
 };
 const defaultState = Object.assign({}, defaultDrawStates, {
+    basePicture: BasePicture, basePictureMobile: BasePictureMobile,
     isPointsFetched: false, points: 0,
 });
 

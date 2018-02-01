@@ -42,6 +42,8 @@ store.dispatch(PbplusMemberCenter.Actions.checkAuthState({clientId: process.env.
 const ConnectedApp = connect(
     (state, ownProps) => {
         return {
+            basePicture: state.campaign.basePicture,
+            basePictureMobile: state.campaign.basePictureMobile,
             campaignButtons: Campaign.getButtons(store.dispatch, state),
             drawResult: state.campaign.drawResult,
             drawResultImage: state.campaign.drawResultImage,

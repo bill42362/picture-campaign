@@ -8,16 +8,8 @@ import AuthState from './AuthState.js';
 import Header from './Header.react.js';
 import '../css/app.less';
 
-import BasePicture from '../img/lottery-0201.png';
-import BasePictureMobile from '../img/lottery-mobile-0201.png';
-
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
-
-const basePicture = new Image();
-basePicture.src = BasePicture;
-const basePictureMobile = new Image();
-basePictureMobile.src = BasePictureMobile;
 
 const ConnectedHeader = connect(
     state => { return {
@@ -52,6 +44,7 @@ class App extends React.Component {
     }
     render() {
         const {
+            basePicture, basePictureMobile,
             campaignButtons,
             drawResult, drawResultImage, drawResultContents, closeCampaignResult
         } = this.props;
@@ -59,7 +52,7 @@ class App extends React.Component {
             <ConnectedHeader />
             <div className='content'>
                 <div className='base-picture-wrapper'>
-                    <img className='base-picture' src={BasePicture} />
+                    <img className='base-picture' src={basePicture.src} />
                 </div>
                 <div className='campaign-buttons-wrapper'>
                     <div className='campaign-buttons' style={{width: basePicture.width}} >
@@ -72,7 +65,7 @@ class App extends React.Component {
                     </div>
                 </div>
                 <div className='base-picture-mobile-wrapper'>
-                    <img className='base-picture-mobile' src={BasePictureMobile} />
+                    <img className='base-picture-mobile' src={basePictureMobile.src} />
                 </div>
                 <div className='campaign-buttons-mobile-wrapper'>
                     <div className='campaign-buttons-mobile' style={{width: basePictureMobile.width}} >
