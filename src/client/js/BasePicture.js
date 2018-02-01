@@ -1,8 +1,8 @@
 // BasePicture.js
 'use strict';
 
-import BasePicture0205 from '../img/lottery-0201.png';
-import BasePictureMobile0205 from '../img/lottery-mobile-0201.png';
+import BasePicture0205 from '../img/lottery-0205.png';
+import BasePictureMobile0205 from '../img/lottery-mobile-0205.png';
 import BasePicture0211 from '../img/lottery-0211.png';
 import BasePictureMobile0211 from '../img/lottery-mobile-0211.png';
 

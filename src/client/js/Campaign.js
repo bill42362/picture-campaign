@@ -8,9 +8,9 @@ import '../css/campaign.less';
 import { BasePicture, BasePictureMobile } from './BasePicture.js';
 import DrawResultJackpot from '../img/draw_result_jackpot.png';
 import DrawResultNotWinning from '../img/draw_result_not_winning.png';
-import DrawResultInsufficientPoints from '../img/draw_result_not_winning.png';
-import DrawResultNotCampaignTime from '../img/draw_result_not_winning.png';
-import DrawResultSomethingGoWrong from '../img/draw_result_not_winning.png';
+import DrawResultInsufficientPoints from '../img/draw_result_insufficient_points.png';
+import DrawResultNotCampaignTime from '../img/draw_result_something_go_wrong.png';
+import DrawResultSomethingGoWrong from '../img/draw_result_something_go_wrong.png';
 
 Debug.disable();
 if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
@@ -113,7 +113,8 @@ const getDrawStates = ({ dispatch, response }) => {
                     {
                         props: {
                             style: {
-                                left: '20%', top: '37%', width: '80%', height: '8%', fontSize: '34px', textAlign: 'left'
+                                left: '10%', top: '34%', width: '80%', height: '8%',
+                                color: '#535353', fontSize: '34px', textAlign: 'left',
                             },
                         },
                         content: <div className='draw-result-award'>
@@ -125,7 +126,7 @@ const getDrawStates = ({ dispatch, response }) => {
                     {
                         props: {
                             style: {
-                                left: '69.5%', top: '81.5%', width: '17.5%', height: '7%', fontSize: '32px', cursor: 'pointer'
+                                left: '68.8%', top: '83%', width: '18%', height: '7%', cursor: 'pointer',
                             },
                             onClick: () => {
                                 dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
@@ -167,16 +168,9 @@ export const getButtons = (dispatch, state) => {
         {
             rwd: 'desktop',
             props: {
-                style: {left: '74.6%', top: '30.8%', width: '11%', height: '1.2%'},
+                style: {left: '68.1%', top: '36.2%', width: '13%', height: '1.5%'},
             },
             content: <a className='join' href='http://x.pbplus.me/point/' title='加入點數計畫' />,
-        },
-        {
-            rwd: 'desktop',
-            props: {
-                style: {left: '51%', top: '59%', width: '35%', height: '9%'},
-                onClick: isUserLoggedIn ? draw : login,
-            },
         },
         {
             rwd: 'desktop',
@@ -197,10 +191,25 @@ export const getButtons = (dispatch, state) => {
         {
             rwd: 'desktop',
             props: {
-                style: {left: '60.5%', top: '69.8%', width: '18.5%', height: '2.3%'},
+                style: {left: '51%', top: '59%', width: '35%', height: '10%'},
                 onClick: isUserLoggedIn ? draw : login,
             },
-            content: <div className='draw' title='點擊抽獎'>點擊抽獎</div>,
+        },
+        {
+            rwd: 'desktop',
+            props: {
+                style: {left: '54.5%', top: '69.8%', width: '13.2%', height: '2.3%'},
+                onClick: isUserLoggedIn ? draw : login,
+            },
+            content: <div className='draw' title='機會'>機會</div>,
+        },
+        {
+            rwd: 'desktop',
+            props: {
+                style: {left: '70.8%', top: '69.8%', width: '13.2%', height: '2.3%'},
+                onClick: isUserLoggedIn ? draw : login,
+            },
+            content: <div className='draw' title='命運'>命運</div>,
         },
         {
             rwd: 'mobile',
