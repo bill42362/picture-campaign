@@ -29,7 +29,7 @@ div.app {
             }
         }
         div.campaign-buttons-mobile-wrapper { display: none; }
-        div.campaign-result-wrapper {
+        div.campaign-result-wrapper, div.campaign-result-mobile-wrapper {
             display: flex;
             justify-content: center; /* align horizontal */
             align-items: center; /* align vertical */
@@ -59,6 +59,7 @@ div.app {
                 }
             }
         }
+        div.campaign-result-mobile-wrapper { display: none; }
     }
     div.pbplus-member-center-wrapper {
         position: relative;
@@ -91,6 +92,8 @@ div.app {
                     }
                 }
             }
+            div.campaign-result-wrapper { display: none; }
+            div.campaign-result-mobile-wrapper { display: flex; }
         }
     }
 }

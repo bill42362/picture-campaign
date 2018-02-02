@@ -18,7 +18,7 @@ if('production' != process.env.NODE_ENV) { Debug.enable('picture-campaign:*'); }
 const defaultDrawStates = {
     drawResult: undefined,
     drawResultImage: undefined,
-    drawResultContents: [],
+    drawResultContents: {desktop: [], mobile: [], both: []},
 };
 const defaultState = Object.assign({}, defaultDrawStates, {
     basePicture: BasePicture, basePictureMobile: BasePictureMobile,
@@ -106,35 +106,51 @@ const getDrawStates = ({ dispatch, response }) => {
             });
             break;
         case 200:
+            const drawResultAward = <div className='draw-result-award'>
+                「
+                <span className='draw-result-award-name'>{response.message}</span>
+                」乙份
+            </div>;
             return Object.assign({}, defaultDrawStates, {
                 drawResult: 'jackpot',
                 drawResultImage: DrawResultJackpot,
-                drawResultContents: [
-                    {
-                        props: {
-                            style: {
-                                left: '10%', top: '34%', width: '80%', height: '8%',
-                                color: '#535353', fontSize: '34px', textAlign: 'left',
+                drawResultContents: {
+                    desktop: [
+                        {
+                            props: {
+                                style: {
+                                    left: '10%', top: '36%', width: '80%', height: '8%',
+                                    color: '#535353', fontSize: '25px', textAlign: 'left',
+                                },
+                            },
+                            content: drawResultAward,
+                        },
+                    ],
+                    mobile: [
+                        {
+                            props: {
+                                style: {
+                                    left: '12%', top: '36%', width: '80%', height: '8%',
+                                    color: '#535353', fontSize: '3vw', textAlign: 'left',
+                                },
+                            },
+                            content: drawResultAward,
+                        },
+                    ],
+                    both: [
+                        {
+                            props: {
+                                style: {
+                                    left: '68.8%', top: '83%', width: '18%', height: '7%', cursor: 'pointer',
+                                },
+                                onClick: () => {
+                                    dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
+                                    return dispatch(PbplusMemberCenter.Actions.display());
+                                },
                             },
                         },
-                        content: <div className='draw-result-award'>
-                            「
-                            <span className='draw-result-award-name'>{response.message}</span>
-                            」乙份
-                        </div>,
-                    },
-                    {
-                        props: {
-                            style: {
-                                left: '68.8%', top: '83%', width: '18%', height: '7%', cursor: 'pointer',
-                            },
-                            onClick: () => {
-                                dispatch(PbplusMemberCenter.Actions.updateActiveTab({activeTab: 'personal-data'}));
-                                return dispatch(PbplusMemberCenter.Actions.display());
-                            },
-                        },
-                    },
-                ],
+                    ]
+                }
             });
             break;
         default:

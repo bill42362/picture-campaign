@@ -82,7 +82,20 @@ class App extends React.Component {
                         <img className='campaign-result-image' src={drawResultImage} />
                         <div className='campaign-result-closer' role='button' onClick={closeCampaignResult}></div>
                         <div className='campaign-result-contents'>
-                            {drawResultContents.map((content, index) => {
+                            {[...drawResultContents.desktop, ...drawResultContents.both].map((content, index) => {
+                                return <div className='campaign-result-content' key={index} {...content.props}>
+                                    {content.content}
+                                </div>;
+                            })}
+                        </div>
+                    </div>
+                </div>}
+                {drawResult && <div className='campaign-result-mobile-wrapper' onClick={this.closeCampaignResult}>
+                    <div className='campaign-result'>
+                        <img className='campaign-result-image' src={drawResultImage} />
+                        <div className='campaign-result-closer' role='button' onClick={closeCampaignResult}></div>
+                        <div className='campaign-result-contents'>
+                            {[...drawResultContents.mobile, ...drawResultContents.both].map((content, index) => {
                                 return <div className='campaign-result-content' key={index} {...content.props}>
                                     {content.content}
                                 </div>;
