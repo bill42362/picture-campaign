@@ -166,9 +166,35 @@
           "RestApiId": { "Ref": "ApiGatewayRestApi" }
       },
       "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayDeployment" : {
+      "DependsOn": [
+          "ApiGatewayRootMethod",
+          "ApiGatewayJsMethod",
+          "ApiGatewayCssMethod",
+          "ApiGatewayRouterMethod",
+          "ApiGatewayOthersMethod"
+      ],
+      "Type" : "AWS::ApiGateway::Deployment",
+      "Properties" : {
+          "StageName": "prod",
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
     }
   },
   "Outputs" : {
+    "ApiGatewayInvokeURL" : {
+      "Value" : { "Ref": "ApiGatewayRestApi" },
+      "Value" : { "Fn::Join" : [ "", [
+          "https://",
+          { "Ref" : "ApiGatewayRestApi" },
+          ".execute-api.",
+          { "Ref" : "AWS::Region" },
+          ".amazonaws.com/prod"
+      ] ] },
+      "Description" : "URL for website routed by api gateway"
+    },
     "WebsiteURL" : {
       "Value" : { "Fn::GetAtt" : [ "S3Bucket", "WebsiteURL" ] },
       "Description" : "URL for website hosted on S3"
