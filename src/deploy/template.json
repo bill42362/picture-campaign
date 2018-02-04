@@ -1,0 +1,181 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Formation test.",
+  "Resources" : {
+    "S3Bucket" : {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "BucketName": {
+            "Fn::Join": [ "", [ {"Ref": "AWS::StackName"}, "-s3-bucket"] ]
+        },
+        "BucketEncryption" : {
+            "ServerSideEncryptionConfiguration" : [
+                {
+                    "ServerSideEncryptionByDefault" : {
+                        "SSEAlgorithm": "AES256"
+                    }
+                }
+            ]
+        },
+        "AccessControl" : "PublicRead",
+        "WebsiteConfiguration" : {
+          "IndexDocument" : "index.html"
+         }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayRestApi" : {
+      "Type" : "AWS::ApiGateway::RestApi",
+      "Properties" : {
+          "Name": {
+              "Fn::Join": [ "", [ {"Ref": "AWS::StackName"}, "-api-gateway"] ]
+          },
+          "BinaryMediaTypes": [ "image/*", "application/font-*", "application/x-font-*" ],
+          "EndpointConfiguration": {
+              "Types": [ "EDGE" ]
+          }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayRootMethod" : {
+      "Type" : "AWS::ApiGateway::Method",
+      "Properties" : {
+          "HttpMethod": "GET",
+          "AuthorizationType": "NONE",
+          "Integration": {
+              "Type": "HTTP_PROXY",
+              "IntegrationHttpMethod": "GET",
+              "Uri": { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] }
+          },
+          "ResourceId": { "Fn::GetAtt": [ "ApiGatewayRestApi", "RootResourceId" ] },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayJsRootResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "js",
+          "ParentId": { "Fn::GetAtt": [ "ApiGatewayRestApi", "RootResourceId" ] },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayJsResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "{filename+}",
+          "ParentId": { "Ref": "ApiGatewayJsRootResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayJsMethod" : {
+      "Type" : "AWS::ApiGateway::Method",
+      "Properties" : {
+          "HttpMethod": "GET",
+          "AuthorizationType": "NONE",
+          "Integration": {
+              "Type": "HTTP_PROXY",
+              "IntegrationHttpMethod": "GET",
+              "Uri": { "Fn::Join": [ "", [ { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] }, "/js/{filename}" ] ] }
+          },
+          "ResourceId": { "Ref": "ApiGatewayJsResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayCssRootResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "css",
+          "ParentId": { "Fn::GetAtt": [ "ApiGatewayRestApi", "RootResourceId" ] },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayCssResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "{filename+}",
+          "ParentId": { "Ref": "ApiGatewayCssRootResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayCssMethod" : {
+      "Type" : "AWS::ApiGateway::Method",
+      "Properties" : {
+          "HttpMethod": "GET",
+          "AuthorizationType": "NONE",
+          "Integration": {
+              "Type": "HTTP_PROXY",
+              "IntegrationHttpMethod": "GET",
+              "Uri": { "Fn::Join": [ "", [ { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] }, "/css/{filename}" ] ] }
+          },
+          "ResourceId": { "Ref": "ApiGatewayCssResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayRouterOrOthersRootResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "{router}",
+          "ParentId": { "Fn::GetAtt": [ "ApiGatewayRestApi", "RootResourceId" ] },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayRouterMethod" : {
+      "Type" : "AWS::ApiGateway::Method",
+      "Properties" : {
+          "HttpMethod": "GET",
+          "AuthorizationType": "NONE",
+          "Integration": {
+              "Type": "HTTP_PROXY",
+              "IntegrationHttpMethod": "GET",
+              "Uri": { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] }
+          },
+          "ResourceId": { "Ref": "ApiGatewayRouterOrOthersRootResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayOthersResource" : {
+      "Type" : "AWS::ApiGateway::Resource",
+      "Properties" : {
+          "PathPart": "{filename+}",
+          "ParentId": { "Ref": "ApiGatewayRouterOrOthersRootResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    },
+    "ApiGatewayOthersMethod" : {
+      "Type" : "AWS::ApiGateway::Method",
+      "Properties" : {
+          "HttpMethod": "GET",
+          "AuthorizationType": "NONE",
+          "Integration": {
+              "Type": "HTTP",
+              "IntegrationHttpMethod": "GET",
+              "ContentHandling": "CONVERT_TO_BINARY",
+              "Uri": { "Fn::Join": [ "", [ { "Fn::GetAtt": [ "S3Bucket", "WebsiteURL" ] }, "/{router}/{filename}" ] ] }
+          },
+          "ResourceId": { "Ref": "ApiGatewayOthersResource" },
+          "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      },
+      "DeletionPolicy" : "Delete"
+    }
+  },
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::GetAtt" : [ "S3Bucket", "WebsiteURL" ] },
+      "Description" : "URL for website hosted on S3"
+    },
+    "S3BucketSecureURL" : {
+      "Value" : { "Fn::Join" : [ "", [ "https://", { "Fn::GetAtt" : [ "S3Bucket", "DomainName" ] } ] ] },
+      "Description" : "Name of S3 bucket to hold website content"
+    }
+  } 
+}

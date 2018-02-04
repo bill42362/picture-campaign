@@ -7,6 +7,7 @@
     "build": "rimraf dist && babel src -d dist --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
     "start": "npm run build && cross-env NODE_ENV=production node dist/server",
     "deploy": "npm run build && babel-node src/deploy",
+    "formation": "babel-node src/deploy/formation.js",
     "devserver": "babel-node src/server",
     "devserver:auto": "nodemon --ignore dist --exec babel-node src/server",
     "wds": "webpack-dev-server --progress",
@@ -29,6 +30,7 @@
   },
   "homepage": "https://github.com/bill42362/picture-campaign#readme",
   "devDependencies": {
+    "aws-sdk": "^2.188.0",
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.2",
