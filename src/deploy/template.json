@@ -181,6 +181,56 @@
           "RestApiId": { "Ref": "ApiGatewayRestApi" }
       },
       "DeletionPolicy" : "Delete"
+    },
+    "CloudFrontDistribution" : {
+      "Type" : "AWS::CloudFront::Distribution",
+      "Properties" : {
+          "DistributionConfig": {
+              "Origins": [
+                {
+                    "DomainName": {
+                      "Fn::Join" : [ "", [
+                          { "Ref" : "ApiGatewayRestApi" },
+                          ".execute-api.",
+                          { "Ref" : "AWS::Region" },
+                          ".amazonaws.com"
+                      ] ]
+                    },
+                    "OriginPath": "/prod",
+                    "Id": "s3-api-gateway",
+                    "CustomOriginConfig": {
+                        "OriginProtocolPolicy": "https-only"
+                    }
+                }
+              ],
+              "DefaultCacheBehavior": {
+                  "TargetOriginId": "s3-api-gateway",
+                  "ViewerProtocolPolicy": "redirect-to-https",
+                  "AllowedMethods": [ "HEAD", "GET" ],
+                  "DefaultTTL": 600,
+                  "MaxTTL": 3600,
+                  "MinTTL": 0,
+                  "ForwardedValues": {
+                      "QueryString": false
+                  },
+                  "Compress": true
+              },
+              "Aliases": [
+                  { "Fn::Join" : [ "", [
+                      { "Ref" : "AWS::StackName" },
+                      ".pbplus.me"
+                  ] ] }
+              ],
+              "ViewerCertificate": {
+                  "AcmCertificateArn": "*.pbplus.me",
+                  "SslSupportMethod": "sni-only"
+              },
+              "HttpVersion": "http2",
+              "IPV6Enabled": true,
+              "Enabled": true
+          }
+      },
+      "DeletionPolicy" : "Delete"
     }
   },
   "Outputs" : {
