@@ -15,8 +15,18 @@ const renderApp = `
         <head>
             <meta name="viewport" content="width=device-width">
             <meta name="viewport" content="initial-scale=1.0">
-            <title>pb+ lottery</title>
+            <title>pb+會員-點數好運抽</title>
+
             ${isProd ? '<link rel="stylesheet" href="/css/main.css"/>' : ''}
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69658178-9"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'UA-69658178-9');
+            </script>
         </head>
         <body style="background-color: black;">
             <div id="app-root"></div>
