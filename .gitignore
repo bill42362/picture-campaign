@@ -12,3 +12,4 @@ config.json
 !default.config.json
 cover/
 dist/
+img/
