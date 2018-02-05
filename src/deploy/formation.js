@@ -8,7 +8,7 @@ Debug.enable('picture-campaign:*');
 AWS.config.loadFromPath('./aws.config.json');
 
 const cloudformation = new AWS.CloudFormation({apiVersion: '2010-05-15'});
-const stackName = 'formation-test';
+const stackName = 'formation-test-2';
 
 const validateParams = {
     TemplateBody: JSON.stringify(Template),
@@ -17,14 +17,12 @@ const createParams = {
     StackName: stackName,
     TemplateBody: JSON.stringify(Template),
     TimeoutInMinutes: 10,
-    /*
     Parameters: [
         {
-            ParameterKey: 'stackName',
-            ParameterValue: stackName,
+            ParameterKey: 'CNAMEs',
+            ParameterValue: `${stackName}.pbplus.me`,
         },
     ],
-     */
 };
 const deleteParams = {
     StackName: stackName,
